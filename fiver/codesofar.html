@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JP Air</title>
+    <!-- CSS.-->
+    <link rel="stylesheet" type="text/css" href="/style.css">
+
+    <script>
+        //This resets the form
+        function resetForm() {
+            document.getElementById("myForm").reset();
+            location.reload();
+        }
+    </script>
+    <script>
+        //Validates the form
+        function validateForm()
+        {
+            //Local Variables
+            var valid = true; //Error checker
+
+            //* * * * * * * * Empty Field Validator * * * * * * * * * * * * * * *
+            document.getElementById("ticket");
+            var firstName = document.getElementById("firstName"),
+                lastName = document.getElementById("lastName");
+
+            if (firstName.value === "") {
+                document.getElementById("firstNameValidate").innerHTML = "Please fill our your first name";
+                valid = false;
+            }
+
+            if (lastName.value === "") {
+                document.getElementById("lastNameValidate").innerHTML = "Please fill out your last name";
+                valid = false;
+            }
+
+            //Random Receipt number
+            var randomReceipt = parseInt(Math.random() * 7 * 100000);
+
+            //Date class
+            var dateToday = new Date();
+            var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            //Result Handler
+            if (valid) {
+                document.getElementById("output").classList.remove("hideMe");
+                document.getElementById("output-date").innerHTML = month[dateToday.getMonth()] + " " + dateToday.getDate() + ", " + dateToday.getFullYear();
+                document.getElementById("output-receipt_number").innerHTML = "Receipt Number: " + randomReceipt;
+                document.getElementById("output-first_name").innerHTML = "Hello, " + firstName.value;
+                document.getElementById("output-flight_details").innerHTML = "<p>" + "Flight Information: " + "</p>" + "<br>";
+                document.getElementById("output-transaction_details").innerHTML = "<h4>Transaction Details: </h4>" + "Total Cost: $";
+                document.getElementById("firstNameValidate").remove();
+                document.getElementById("lastNameValidate").remove();
+                document.getElementById("ticketValidate").remove();
+                document.getElementById("myForm").reset();
+
+                return false;
+
+            }
+            return valid;
+
+        }
+
+    </script>
+
+    <script>
+        //Prints only the output part
+        function printPart() {
+            if (arrivalPoint !== departurePoint) {
+                var printContent = document.getElementById("output");
+                var printWindow = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+                printWindow.document.write(printContent.innerHTML);
+                printWindow.document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">");
+                printWindow.document.close();
+                printWindow.focus();
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+
+<?php
+/* Procedural connection to MySQL using PHP */
+// Set up username and password with your own creds
+$username = "jp";
+$password = "jp";
+
+$hostname = "localhost";
+$database = "airline_database";
+$portnum  = 3306;
+// Connect to the MYSQL DBMS server - this establishes a socket
+// connection associated with the host name and port number. By
+// default the port number is 3306 and can often be left out
+$link = mysqli_connect($hostname, $username, $password, $database, $portnum);
+if (!$link) {
+    trigger_error("Could not connect:", E_USER_ERROR);
+}
+
+// Make a query
+$sql = "SELECT * FROM aircraft";
+$result = mysqli_query($link, $sql);
+if (!$result) {
+    trigger_error("Invalid query: ", E_USER_ERROR);
+}
+
+
+// Iterate over the rows of the results table, fetching each row as a
+// PHP associative array
+while ($row = mysqli_fetch_assoc($result)) {
+
+}
+
+// Free the resources associated with this result set. It is done
+// automatically at the end of the script
+mysqli_free_result($result);
+
+// Close the socket connection
+mysqli_close($link);
+?>
+
+
+
+<div class="container">
+    <div class="title-container heading">
+        <h1>Flight Booking</h1>
+    </div>
+</div>
+<div class="form-container">
+    <h3> Welcome to JP Airlines! We are happy to serve you on your next journey. Please fill out this form with your details in order to book your next flight. Thank you for flying with us.</h3>
+    <table id="maintable">
+        <tr class="mainTableRow">
+            <th class="mainTableHeader"></th>
+            <th class="mainTableHeader"></th>
+        </tr>
+        <tr class="mainTableRow">
+            <td class="mainTableData">
+                <h3>Book a Flight</h3>
+                <!--Form Container-->
+                <form id="myForm" onsubmit="return validateForm()">
+                    <!--First name-->
+                    <p>First Name:</p>
+                    <div id="firstNameValidate" class="removeMe"></div>
+                    <input type="text" name="firstName" id="firstName" placeholder="Julien">
+
+                    <!--Last name-->
+                    <p>Last Name:</p>
+                    <div id="lastNameValidate" class="removeMe"></div>
+                    <input type="text" name="lastName" id="lastName" placeholder="Powell">
+
+
+                    <!--departure point (Dropdown Boxes)-->
+                    <p>Choose flight route </p>
+                    <div id="routeSelection"></div>
+                    <select name="route" id="route">
+                        <option value="">Select your flight route</option>
+                        <option value="0">Dairy Flat to Chatham Islands</option>
+                        <option value="1">Dairy flat to Sydney</option>
+                        <option value="2">Dairy flat to Rotorua</option>
+                        <option value="3">Dairy flat to Great barrier island</option>
+                        <option value="4">Dairy flat to Lake Tekapo</option>
+                        <option value="0">Sydney to Dairy Flat </option>
+                        <option value="1">Rotorua to Dairy Flat</option>
+                        <option value="2">Great barrier island to Dairy Flat</option>
+                        <option value="3">Dairy to Dairy Flat  </option>
+                        <option value="4">Lake Tekapo to Dairy Flat </option>
+                    </select>
+                </form>
+            </td>
+
+            <!--Output-->
+            <td class="mainTableData">
+                <div class="hideMe" id="output">
+                    <table id="output-table">
+
+                        <h2 style="text-align:center;">  JP Airlines</h2>
+
+                        <tr>
+                            <td id="output-date"></td>
+
+                        </tr>
+                        <tr>
+                            <td id="output-receipt_number"></td>
+                        </tr>
+                        <tr>
+                            <td id="output-first_name"></td>
+                        </tr>
+                        <tr>
+                            <td id="output-message">
+                                <p id="output">Thank you for choosing to fly with us! Rest assured, our planes are
+                                    guaranteed to not explode, crash, and/or teleport to alternate dimension while in flight*</p>
+                                <p id="output">*We make no such guarantees for planes not currently in flight.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="output-flight_details"></td>
+                        </tr>
+                        <tr>
+                            <td id="output-transaction_details"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>JP Airlines</h3></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button type="button" class="button button-black" onclick="printPart()">Book Flight</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
